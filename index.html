@@ -226,6 +226,9 @@
                 notification.classList.remove('show');
             } else {
                 playSfx(finalSound); // Trigger TeAmo.mp4 on final click
+                setTimeout(() => {
+                    playSfx(finalSound); 
+                }, 800);
                 actions.style.display = 'none';
                 display.style.display = 'none';
                 finalCard.style.display = 'block';
