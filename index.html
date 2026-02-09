@@ -50,7 +50,6 @@
             z-index: 50; 
         }
 
-        /* iOS NOTIFICATION STYLE */
         #ios-notification {
             position: fixed;
             top: -150px;
@@ -99,12 +98,11 @@
             color: #555;
         }
 
-        /* BUTTONS - Updated to be long/pill-shaped */
         #valentine-btn {
             background-color: var(--primary-pink);
             color: white;
             border: none;
-            padding: 15px 40px; /* Wider padding for long button look */
+            padding: 15px 40px;
             font-size: 1.3rem;
             border-radius: 50px; 
             cursor: pointer;
@@ -118,23 +116,25 @@
             transform: translate(-50%, -50%);
             z-index: 100;
             touch-action: manipulation;
-            white-space: nowrap; /* Forces single line */
+            white-space: nowrap;
         }
 
         #no-btn {
             background-color: var(--no-gray);
             color: white;
             border: none;
-            padding: 12px 35px; /* Consistent longer button styling */
-            font-size: 1rem;
-            border-radius: 50px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
             cursor: pointer;
             position: absolute;
             left: 50%;
             top: 85%;
             transform: translate(-50%, -50%);
             z-index: 10;
-            white-space: nowrap; /* Forces single line */
+            display: flex;
+            justify-content: center;
+            align-items: center;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -184,9 +184,9 @@
     </div>
 
     <script>
-        // Audio Setup
-        const popSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
-        const errorSound = new Audio('https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3');
+        // Updated Sounds
+        const yaySound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3'); // Yay
+        const boingSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2192/2192-preview.mp3'); // Boing
 
         const btn = document.getElementById('valentine-btn');
         const noBtn = document.getElementById('no-btn');
@@ -221,7 +221,7 @@
         }
 
         noBtn.addEventListener('click', () => {
-            playSfx(errorSound);
+            playSfx(boingSound);
             notification.classList.add('show');
         });
 
@@ -229,17 +229,21 @@
             let randomX, randomY, overlap;
             const noRect = noBtn.getBoundingClientRect();
             const msgRect = display.getBoundingClientRect();
-            const margin = 100; 
+            
+            // Adjust boundaries so the larger button doesn't go off screen
+            const padding = 20; // safe distance from screen edges in %
+            const verticalSafeTop = 30; // 30% down from top to clear message
+            const verticalSafeBottom = 20; // 20% up from bottom to clear No button area
 
             do {
-                randomX = Math.floor(Math.random() * 70) + 15; 
-                randomY = Math.floor(Math.random() * 45) + 30; 
+                randomX = Math.floor(Math.random() * (100 - 2 * padding)) + padding; 
+                randomY = Math.floor(Math.random() * (100 - verticalSafeTop - verticalSafeBottom)) + verticalSafeTop; 
 
                 const testX = (window.innerWidth * randomX) / 100;
                 const testY = (window.innerHeight * randomY) / 100;
 
                 const distToNo = Math.hypot(testX - (noRect.left + noRect.width/2), testY - (noRect.top + noRect.height/2));
-                const hitMessage = testY < (msgRect.bottom + margin);
+                const hitMessage = testY < (msgRect.bottom + 60);
 
                 overlap = (distToNo < 150) || hitMessage;
             } while (overlap);
@@ -249,7 +253,7 @@
         }
 
         btn.addEventListener('click', () => {
-            playSfx(popSound);
+            playSfx(yaySound);
             notification.classList.remove('show');
             
             clicks++;
