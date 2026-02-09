@@ -36,10 +36,10 @@
         #message-display {
             font-size: 1.15rem;
             color: var(--dark-pink);
-            height: 120px; 
+            height: 100px; 
             width: 85%;
             margin: 0 auto;
-            margin-top: 22vh;
+            margin-top: 15vh;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -50,10 +50,9 @@
             z-index: 50; 
         }
 
-        /* iOS NOTIFICATION STYLE */
         #ios-notification {
             position: fixed;
-            top: -120px;
+            top: -150px;
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
@@ -66,7 +65,7 @@
             display: flex;
             align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: top 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            transition: top 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             z-index: 1000;
             text-align: left;
         }
@@ -99,14 +98,16 @@
             color: #555;
         }
 
-        /* BUTTONS */
         #valentine-btn {
             background-color: var(--primary-pink);
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1.4rem;
+            line-height: 1.1;
+            border-radius: 50%; 
+            min-width: 100px;
+            min-height: 100px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -114,10 +115,14 @@
             font-weight: bold;
             position: absolute;
             left: 50%;
-            top: 50%;
+            top: 55%;
             transform: translate(-50%, -50%);
             z-index: 100;
             touch-action: manipulation;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         #no-btn {
@@ -130,7 +135,7 @@
             cursor: pointer;
             position: absolute;
             left: 50%;
-            top: 70%;
+            top: 85%; /* Kept low to avoid Si button range */
             transform: translate(-50%, -50%);
             z-index: 10;
         }
@@ -170,7 +175,7 @@
     <div id="container">
         <div id="message-display">¿Quieres ser mi Valentine?</div>
         
-        <button id="valentine-btn">SÍ ❤️</button>
+        <button id="valentine-btn">SÍ<br>❤️</button>
         <button id="no-btn">No🤢</button>
 
         <div id="final-card">
@@ -209,27 +214,25 @@
 
         noBtn.addEventListener('click', () => {
             notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
         });
 
         function moveButton() {
-            const noRect = noBtn.getBoundingClientRect();
             let randomX, randomY, overlap;
+            const noRect = noBtn.getBoundingClientRect();
+            const msgRect = display.getBoundingClientRect();
+            const margin = 100; 
 
-            // Loop to ensure the new SÍ position doesn't overlap the No button
             do {
-                randomX = Math.floor(Math.random() * 70) + 15; // 15% to 85%
-                randomY = Math.floor(Math.random() * 60) + 20; // 20% to 80%
-                
-                // Temp check of where the button would be
+                randomX = Math.floor(Math.random() * 70) + 15; 
+                randomY = Math.floor(Math.random() * 45) + 30; // restricted vertical range
+
                 const testX = (window.innerWidth * randomX) / 100;
                 const testY = (window.innerHeight * randomY) / 100;
-                
-                // If SÍ is within 100px of No, try again
-                const dist = Math.hypot(testX - noRect.left, testY - noRect.top);
-                overlap = dist < 120; 
+
+                const distToNo = Math.hypot(testX - (noRect.left + noRect.width/2), testY - (noRect.top + noRect.height/2));
+                const hitMessage = testY < (msgRect.bottom + margin);
+
+                overlap = (distToNo < 140) || hitMessage;
             } while (overlap);
 
             btn.style.left = `${randomX}%`;
@@ -237,11 +240,14 @@
         }
 
         btn.addEventListener('click', () => {
+            // Dismiss notification immediately on Si click
+            notification.classList.remove('show');
+            
             clicks++;
             
             if (clicks <= 14) {
                 display.innerText = messages[clicks - 1];
-                scale += 0.12;
+                scale += 0.10;
                 moveButton();
                 btn.style.transform = `translate(-50%, -50%) scale(${scale})`;
             } else {
@@ -250,7 +256,6 @@
                 display.style.display = 'none';
                 finalCard.style.display = 'block';
                 
-                // Confetti logic
                 var end = Date.now() + (5 * 1000);
                 (function frame() {
                     confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
