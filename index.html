@@ -23,7 +23,7 @@
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
             text-align: center;
-            /* CRITICAL: This line blocks double-tap zoom on most mobile browsers */
+            /* Blocks double-tap zoom */
             touch-action: manipulation; 
         }
 
@@ -32,21 +32,26 @@
             max-width: 400px;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
+            height: 100vh;
         }
 
         #message-display {
             font-size: 1.1rem;
             color: var(--dark-pink);
-            height: 120px; 
+            /* Fixed height to prevent the button from jumping up/down */
+            height: 150px; 
             margin-bottom: 20px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px;
-            z-index: 20;
-            line-height: 1.3;
+            padding: 10px;
+            line-height: 1.4;
+            /* Ensures text stays above the button scale */
+            position: relative;
+            z-index: 20; 
         }
 
         #valentine-btn {
@@ -59,11 +64,10 @@
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
             transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            /* This line blocks the grey highlight box on iPhones when clicking fast */
-            -webkit-tap-highlight-color: transparent; 
+            -webkit-tap-highlight-color: transparent;
             font-weight: bold;
+            position: relative;
             z-index: 10;
-            /* Also applying touch-action here for good measure */
             touch-action: manipulation;
         }
 
@@ -78,6 +82,7 @@
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             animation: popIn 0.5s ease forwards;
+            z-index: 30;
         }
 
         h1 { color: var(--dark-pink); margin-bottom: 10px; }
@@ -128,14 +133,16 @@
         ];
 
         btn.addEventListener('click', (e) => {
-            // Prevent default browser behavior for fast taps
-            e.preventDefault();
+            // e.preventDefault() can sometimes block the click entirely on mobile, 
+            // touch-action: manipulation is usually enough.
             
             clicks++;
             
             if (clicks <= 14) {
                 display.innerText = messages[clicks - 1];
-                scale += 0.15;
+                
+                // Controlled inflation to avoid covering the whole screen
+                scale += 0.12; 
                 btn.style.transform = `scale(${scale})`;
             } else {
                 btn.style.display = 'none';
