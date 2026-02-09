@@ -129,15 +129,20 @@
             background-color: var(--no-gray);
             color: white;
             border: none;
-            padding: 10px 25px;
-            font-size: 1rem;
-            border-radius: 50px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Keep existing positioning */
             cursor: pointer;
             position: absolute;
             left: 50%;
-            top: 85%; /* Kept low to avoid Si button range */
+            top: 85%;
             transform: translate(-50%, -50%);
             z-index: 10;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #final-card {
