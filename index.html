@@ -22,7 +22,7 @@
             min-height: 100vh;
             background-color: var(--bg-color);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
             text-align: center;
             touch-action: manipulation; 
         }
@@ -34,7 +34,6 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            box-sizing: border-box;
         }
 
         #message-display {
@@ -99,7 +98,6 @@
             color: #555;
         }
 
-        /* VERTICAL BUTTON LAYOUT */
         .btn-group {
             display: flex;
             flex-direction: column; 
@@ -112,21 +110,20 @@
             border: none;
             padding: 15px 45px;
             font-size: 1.2rem;
-            border-radius: 100px;
+            border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
             white-space: nowrap;
-            transition: all 0.2s ease;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             -webkit-tap-highlight-color: transparent;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 90vw; /* Keeps button from growing off screen */
-            box-sizing: border-box;
         }
 
         #valentine-btn {
             background-color: var(--primary-pink);
             color: white;
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            z-index: 2;
         }
 
         #no-btn {
@@ -156,13 +153,13 @@
     <div id="ios-notification">
         <div id="ios-icon">❤️</div>
         <div class="notification-content">
-            <b>¡Que mala!</b>
-            <span>Intenta de nuevo</span>
+            <b>Wrong Answer</b>
+            <span>Please try again.</span>
         </div>
     </div>
 
     <div id="container">
-        <div id="message-display">¿Quieres ser mi Valentine's?</div>
+        <div id="message-display">¿Quieres ser mi Valentine?</div>
         
         <div class="btn-group" id="actions">
             <button id="valentine-btn" class="pill-btn">SÍ ❤️</button>
@@ -171,8 +168,8 @@
 
         <div id="final-card">
             <h1>¡POR FIN! 🥂</h1>
-            <p><strong>¡Sabía que no te ibas a rendir!</strong></p>
-            <p>Salimos mi casa a las 7</p>
+            <p>Sabía que no te ibas a rendir</p>
+            <p><strong>Salimos de mi casa a las 7</strong></p>
             <p>Espero te guste la comida Mediterranea/Israelí...</p>
         </div>
     </div>
@@ -180,6 +177,7 @@
     <script>
         const yaySound = new Audio('Yeii.mp4');
         const boingSound = new Audio('Chafa.mp4');
+        const finalSound = new Audio('TeAmo.mp4'); // Added third audio
 
         const btn = document.getElementById('valentine-btn');
         const noBtn = document.getElementById('no-btn');
@@ -189,9 +187,6 @@
         const actions = document.getElementById('actions');
         
         let clicks = 0;
-        let paddingH = 45;
-        let paddingV = 15;
-        let fSize = 1.2;
 
         const messages = [
             "¿Segura que si quieres?",
@@ -213,7 +208,7 @@
         function playSfx(audio) {
             audio.pause();
             audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio play blocked until interaction"));
+            audio.play().catch(e => console.log("Audio play blocked"));
         }
 
         noBtn.addEventListener('click', () => {
@@ -222,24 +217,14 @@
         });
 
         btn.addEventListener('click', () => {
-            playSfx(yaySound);
-            notification.classList.remove('show');
-            
             clicks++;
             
             if (clicks <= 14) {
+                playSfx(yaySound);
                 display.innerText = messages[clicks - 1];
-                
-                // Instead of transform: scale, we increase padding and font size.
-                // This forces the flexbox to re-calculate space, pushing the No button down.
-                paddingH += 10;
-                paddingV += 5;
-                fSize += 0.05;
-
-                btn.style.padding = `${paddingV}px ${paddingH}px`;
-                btn.style.fontSize = `${fSize}rem`;
-
+                notification.classList.remove('show');
             } else {
+                playSfx(finalSound); // Trigger TeAmo.mp4 on final click
                 actions.style.display = 'none';
                 display.style.display = 'none';
                 finalCard.style.display = 'block';
