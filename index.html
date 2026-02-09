@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Para mi Valentine</title>
+    <title>My Valentine's?</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -32,19 +32,20 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         #message-display {
             font-size: 1.15rem;
             color: var(--dark-pink);
-            height: 120px; 
+            min-height: 120px; 
             width: 85%;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
             line-height: 1.4;
         }
 
@@ -97,17 +98,18 @@
             color: #555;
         }
 
-        /* BUTTON LAYOUT - Side by Side */
+        /* VERTICAL BUTTON LAYOUT */
         .btn-group {
             display: flex;
-            gap: 15px;
-            justify-content: center;
+            flex-direction: column; /* Stacks buttons vertically */
+            gap: 20px;
             align-items: center;
+            width: 100%;
         }
 
         .pill-btn {
             border: none;
-            padding: 15px 35px;
+            padding: 15px 45px;
             font-size: 1.2rem;
             border-radius: 50px;
             cursor: pointer;
@@ -122,6 +124,7 @@
             background-color: var(--primary-pink);
             color: white;
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            z-index: 2; /* Ensures Si button stays on top visually if needed */
         }
 
         #no-btn {
@@ -135,7 +138,7 @@
             padding: 30px;
             border-radius: 25px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-            width: 80%;
+            width: 85%;
             max-width: 320px;
             animation: popIn 0.6s ease forwards;
         }
@@ -151,8 +154,8 @@
     <div id="ios-notification">
         <div id="ios-icon">❤️</div>
         <div class="notification-content">
-            <b>System Error</b>
-            <span>Wrong Answer😢. Please try again.</span>
+            <b>Wrong Answer</b>
+            <span>Please try again.</span>
         </div>
     </div>
 
@@ -166,15 +169,16 @@
 
         <div id="final-card">
             <h1>¡POR FIN! 🥂</h1>
-            <p>Sabía que no te ibas a rendir.</p>
-            <p><strong>Nos vemos el 14 en Motek South Beach</strong></p>
+            <p>Sabía que no te ibas a rendir</p>
+            <p><strong>Salimos mi casa a las 7</strong></p>
+            <p>Espero te guste la comida Mediterranea/Israelí...</p>
         </div>
     </div>
 
     <script>
-        // Updated to use your local recordings
+        // Using your local files Yeii.mp4 and Chafa.mp4
         const yaySound = new Audio('Yeii.mp4');
-        const boingSound = new Audio('Wrong.mp4');
+        const boingSound = new Audio('Chafa.mp4');
 
         const btn = document.getElementById('valentine-btn');
         const noBtn = document.getElementById('no-btn');
@@ -222,8 +226,10 @@
             
             if (clicks <= 14) {
                 display.innerText = messages[clicks - 1];
-                scale += 0.12;
+                scale += 0.15; // Growth increment
                 btn.style.transform = `scale(${scale})`;
+                // Because they are in a flex column, the growth of the top button 
+                // naturally pushes the bottom button down without overlap.
             } else {
                 actions.style.display = 'none';
                 display.style.display = 'none';
