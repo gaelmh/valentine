@@ -29,27 +29,26 @@
 
         #container {
             width: 100%;
-            height: 100vh;
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         #message-display {
             font-size: 1.15rem;
             color: var(--dark-pink);
-            height: 100px; 
+            height: 120px; 
             width: 85%;
-            margin: 0 auto;
-            margin-top: 15vh;
+            margin-bottom: 30px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 10px;
             line-height: 1.4;
-            position: relative;
-            z-index: 50; 
         }
 
+        /* iOS NOTIFICATION STYLE */
         #ios-notification {
             position: fixed;
             top: -150px;
@@ -98,44 +97,36 @@
             color: #555;
         }
 
+        /* BUTTON LAYOUT - Side by Side */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pill-btn {
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
         #valentine-btn {
             background-color: var(--primary-pink);
             color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.3rem;
-            border-radius: 50px; 
-            cursor: pointer;
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            -webkit-tap-highlight-color: transparent;
-            font-weight: bold;
-            position: absolute;
-            left: 50%;
-            top: 55%;
-            transform: translate(-50%, -50%);
-            z-index: 100;
-            touch-action: manipulation;
-            white-space: nowrap;
         }
 
         #no-btn {
             background-color: var(--no-gray);
             color: white;
-            border: none;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            cursor: pointer;
-            position: absolute;
-            left: 50%;
-            top: 85%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            -webkit-tap-highlight-color: transparent;
         }
 
         #final-card {
@@ -144,19 +135,14 @@
             padding: 30px;
             border-radius: 25px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             width: 80%;
             max-width: 320px;
-            z-index: 200;
             animation: popIn 0.6s ease forwards;
         }
 
         @keyframes popIn {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
@@ -173,8 +159,10 @@
     <div id="container">
         <div id="message-display">¿Quieres ser mi Valentine?</div>
         
-        <button id="valentine-btn">SÍ ❤️</button>
-        <button id="no-btn">No 🤢</button>
+        <div class="btn-group" id="actions">
+            <button id="valentine-btn" class="pill-btn">SÍ ❤️</button>
+            <button id="no-btn" class="pill-btn">No 🤢</button>
+        </div>
 
         <div id="final-card">
             <h1>¡POR FIN! 🥂</h1>
@@ -184,15 +172,15 @@
     </div>
 
     <script>
-        // Updated Sounds
-        const yaySound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3'); // Yay
-        const boingSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2192/2192-preview.mp3'); // Boing
+        const yaySound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+        const boingSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2192/2192-preview.mp3');
 
         const btn = document.getElementById('valentine-btn');
         const noBtn = document.getElementById('no-btn');
         const display = document.getElementById('message-display');
         const finalCard = document.getElementById('final-card');
         const notification = document.getElementById('ios-notification');
+        const actions = document.getElementById('actions');
         
         let clicks = 0;
         let scale = 1;
@@ -217,40 +205,13 @@
         function playSfx(audio) {
             audio.pause();
             audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio play blocked until interaction"));
+            audio.play().catch(e => console.log("Audio play blocked"));
         }
 
         noBtn.addEventListener('click', () => {
             playSfx(boingSound);
             notification.classList.add('show');
         });
-
-        function moveButton() {
-            let randomX, randomY, overlap;
-            const noRect = noBtn.getBoundingClientRect();
-            const msgRect = display.getBoundingClientRect();
-            
-            // Adjust boundaries so the larger button doesn't go off screen
-            const padding = 20; // safe distance from screen edges in %
-            const verticalSafeTop = 30; // 30% down from top to clear message
-            const verticalSafeBottom = 20; // 20% up from bottom to clear No button area
-
-            do {
-                randomX = Math.floor(Math.random() * (100 - 2 * padding)) + padding; 
-                randomY = Math.floor(Math.random() * (100 - verticalSafeTop - verticalSafeBottom)) + verticalSafeTop; 
-
-                const testX = (window.innerWidth * randomX) / 100;
-                const testY = (window.innerHeight * randomY) / 100;
-
-                const distToNo = Math.hypot(testX - (noRect.left + noRect.width/2), testY - (noRect.top + noRect.height/2));
-                const hitMessage = testY < (msgRect.bottom + 60);
-
-                overlap = (distToNo < 150) || hitMessage;
-            } while (overlap);
-
-            btn.style.left = `${randomX}%`;
-            btn.style.top = `${randomY}%`;
-        }
 
         btn.addEventListener('click', () => {
             playSfx(yaySound);
@@ -260,12 +221,10 @@
             
             if (clicks <= 14) {
                 display.innerText = messages[clicks - 1];
-                scale += 0.10;
-                moveButton();
-                btn.style.transform = `translate(-50%, -50%) scale(${scale})`;
+                scale += 0.12;
+                btn.style.transform = `scale(${scale})`;
             } else {
-                btn.style.display = 'none';
-                noBtn.style.display = 'none';
+                actions.style.display = 'none';
                 display.style.display = 'none';
                 finalCard.style.display = 'block';
                 
