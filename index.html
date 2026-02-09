@@ -21,7 +21,7 @@
             align-items: center;
             min-height: 100vh;
             background-color: var(--bg-color);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow: hidden;
             text-align: center;
             touch-action: manipulation; 
@@ -31,18 +31,15 @@
             width: 100%;
             height: 100vh;
             position: relative;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* Moved closer to the center/buttons */
         #message-display {
             font-size: 1.15rem;
             color: var(--dark-pink);
-            height: 100px; 
+            height: 120px; 
             width: 85%;
             margin: 0 auto;
-            margin-top: 25vh; /* Brought down from the top */
+            margin-top: 22vh;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -53,12 +50,56 @@
             z-index: 50; 
         }
 
-        .btn-container {
-            position: relative;
-            flex-grow: 1;
-            width: 100%;
+        /* iOS NOTIFICATION STYLE */
+        #ios-notification {
+            position: fixed;
+            top: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 350px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: top 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 1000;
+            text-align: left;
         }
 
+        #ios-notification.show {
+            top: 20px;
+        }
+
+        #ios-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-pink);
+            border-radius: 10px;
+            margin-right: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .notification-content b {
+            display: block;
+            font-size: 0.85rem;
+            color: #333;
+        }
+
+        .notification-content span {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        /* BUTTONS */
         #valentine-btn {
             background-color: var(--primary-pink);
             color: white;
@@ -68,61 +109,38 @@
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             -webkit-tap-highlight-color: transparent;
             font-weight: bold;
             position: absolute;
             left: 50%;
-            top: 20%; /* Adjusted starting position */
+            top: 50%;
             transform: translate(-50%, -50%);
             z-index: 100;
             touch-action: manipulation;
-            white-space: nowrap;
         }
 
         #no-btn {
             background-color: var(--no-gray);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 25px;
             font-size: 1rem;
             border-radius: 50px;
             cursor: pointer;
             position: absolute;
             left: 50%;
-            top: 45%; /* Moved up closer to the Si button */
+            top: 70%;
             transform: translate(-50%, -50%);
             z-index: 10;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Styled "Wrong Answer" Toast */
-        #wrong-answer-toast {
-            position: fixed;
-            bottom: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #333;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            transition: bottom 0.4s ease;
-            z-index: 1000;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        #wrong-answer-toast.show {
-            bottom: 50px;
         }
 
         #final-card {
             display: none;
             background: white;
             padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            animation: popIn 0.5s ease forwards;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
             position: absolute;
             top: 50%;
             left: 50%;
@@ -130,28 +148,30 @@
             width: 80%;
             max-width: 320px;
             z-index: 200;
+            animation: popIn 0.6s ease forwards;
         }
 
-        h1 { color: var(--dark-pink); margin-bottom: 10px; }
-        p { font-size: 1.1rem; color: #555; line-height: 1.5; }
-
         @keyframes popIn {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
             100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
     </style>
 </head>
 <body>
 
+    <div id="ios-notification">
+        <div id="ios-icon">❤️</div>
+        <div class="notification-content">
+            <b>System Error</b>
+            <span>Wrong Answer😢. Please try again.</span>
+        </div>
+    </div>
+
     <div id="container">
         <div id="message-display">¿Quieres ser mi Valentine?</div>
         
-        <div class="btn-container">
-            <button id="valentine-btn">SÍ ❤️</button>
-            <button id="no-btn">No🤢</button>
-        </div>
-
-        <div id="wrong-answer-toast">Wrong Answer😢</div>
+        <button id="valentine-btn">SÍ ❤️</button>
+        <button id="no-btn">No🤢</button>
 
         <div id="final-card">
             <h1>¡POR FIN! 🥂</h1>
@@ -165,7 +185,7 @@
         const noBtn = document.getElementById('no-btn');
         const display = document.getElementById('message-display');
         const finalCard = document.getElementById('final-card');
-        const toast = document.getElementById('wrong-answer-toast');
+        const notification = document.getElementById('ios-notification');
         
         let clicks = 0;
         let scale = 1;
@@ -187,13 +207,34 @@
             "Ahora si, último esfuerzo!"   
         ];
 
-        // Custom Toast logic for the "No" button
         noBtn.addEventListener('click', () => {
-            toast.classList.add('show');
+            notification.classList.add('show');
             setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
+                notification.classList.remove('show');
+            }, 3000);
         });
+
+        function moveButton() {
+            const noRect = noBtn.getBoundingClientRect();
+            let randomX, randomY, overlap;
+
+            // Loop to ensure the new SÍ position doesn't overlap the No button
+            do {
+                randomX = Math.floor(Math.random() * 70) + 15; // 15% to 85%
+                randomY = Math.floor(Math.random() * 60) + 20; // 20% to 80%
+                
+                // Temp check of where the button would be
+                const testX = (window.innerWidth * randomX) / 100;
+                const testY = (window.innerHeight * randomY) / 100;
+                
+                // If SÍ is within 100px of No, try again
+                const dist = Math.hypot(testX - noRect.left, testY - noRect.top);
+                overlap = dist < 120; 
+            } while (overlap);
+
+            btn.style.left = `${randomX}%`;
+            btn.style.top = `${randomY}%`;
+        }
 
         btn.addEventListener('click', () => {
             clicks++;
@@ -201,13 +242,7 @@
             if (clicks <= 14) {
                 display.innerText = messages[clicks - 1];
                 scale += 0.12;
-                
-                // Random movement
-                const randomX = Math.floor(Math.random() * 70) + 15;
-                const randomY = Math.floor(Math.random() * 50) + 15;
-                
-                btn.style.left = `${randomX}%`;
-                btn.style.top = `${randomY}%`;
+                moveButton();
                 btn.style.transform = `translate(-50%, -50%) scale(${scale})`;
             } else {
                 btn.style.display = 'none';
@@ -215,22 +250,13 @@
                 display.style.display = 'none';
                 finalCard.style.display = 'block';
                 
-                var duration = 5 * 1000;
-                var animationEnd = Date.now() + duration;
-                var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-                function randomInRange(min, max) {
-                  return Math.random() * (max - min) + min;
-                }
-
-                var interval = setInterval(function() {
-                  var timeLeft = animationEnd - Date.now();
-                  if (timeLeft <= 0) return clearInterval(interval);
-
-                  var particleCount = 50 * (timeLeft / duration);
-                  confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                  confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-                }, 250);
+                // Confetti logic
+                var end = Date.now() + (5 * 1000);
+                (function frame() {
+                    confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
+                    confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
+                    if (Date.now() < end) requestAnimationFrame(frame);
+                }());
             }
         });
     </script>
